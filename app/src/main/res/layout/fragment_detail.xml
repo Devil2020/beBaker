@@ -1,0 +1,64 @@
+<android.support.constraint.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/StepsScrollView"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<ScrollView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:id="@+id/StepsLayout"
+        tools:context="comc.example.mohammedmorse.baking.StepFragment">
+
+        <!-- TODO: Update blank fragment layout -->
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:id="@+id/SimpleExoPlayerView"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:id="@+id/StepDescription"
+            android:textSize="20sp"
+            android:padding="10dp"
+            app:layout_constraintTop_toBottomOf="@id/SimpleExoPlayerView"
+            android:layout_marginTop="10dp"
+            />
+    </LinearLayout>
+</ScrollView>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:id="@+id/DetailFragmentLayout2"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        >
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_skip_previous_black_24dp"
+            android:id="@+id/Previous"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+
+            />
+
+        <ImageButton
+            android:id="@+id/Next"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:src="@drawable/ic_skip_next_black_24dp" />
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>
