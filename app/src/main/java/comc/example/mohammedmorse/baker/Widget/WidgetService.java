@@ -1,12 +1,16 @@
 package comc.example.mohammedmorse.baker.Widget;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import comc.example.mohammedmorse.baker.Model.DataBase.ContentProviderContract;
 import comc.example.mohammedmorse.baker.Model.DataBase.DatabaseContrct;
+import comc.example.mohammedmorse.baker.R;
 
 /**
  * Created by Mohammed Morse on 17/09/2018.
@@ -15,11 +19,12 @@ import comc.example.mohammedmorse.baker.Model.DataBase.DatabaseContrct;
 public class WidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
+
         return new WidgetServiceFactory();
     }
     public class WidgetServiceFactory implements RemoteViewsFactory{
         Cursor cursor;
-        String [] strings;
+
         @Override
         public void onCreate() {
 
@@ -29,8 +34,10 @@ public class WidgetService extends RemoteViewsService {
         public void onDataSetChanged() {
             String [] strings=new String[1];
             strings[0]=DatabaseContrct.ColumeName;
-           cursor= getContentResolver().query(ContentProviderContract.FinalUrl,strings
-            ,null,null,null,null);
+            cursor= getContentResolver().query(ContentProviderContract.FinalUrl,strings
+                    ,null,null,null,null);
+            RemoteViews views=new RemoteViews(getApplicationContext().getPackageName(),R.layout.list_widget);
+
         }
 
         @Override
@@ -45,13 +52,13 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public RemoteViews getViewAt(int i) {
-            strings=getStrings(cursor);
-            RemoteViews remoteViews=new RemoteViews(getApplicationContext().getPackageName()
+           String [] strings=getStrings(cursor);
+            RemoteViews views=new RemoteViews(getApplicationContext().getPackageName(), R.layout.list_widget);
+            RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName()
                     , android.R.layout.simple_list_item_1);
-            if(strings.length>0) {
-                remoteViews.setTextViewText(android.R.id.text1, strings[i]);
-
-            }
+                if (strings.length > 0) {
+                    remoteViews.setTextViewText(android.R.id.text1, strings[i]);
+                }
 
             return remoteViews;
         }

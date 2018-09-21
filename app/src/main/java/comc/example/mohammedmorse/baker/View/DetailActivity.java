@@ -19,7 +19,7 @@ public class DetailActivity extends AppCompatActivity implements DetailActivityV
        MainActivityPresenterInterface anInterface;
        FragmentManager manager;
        FragmentTransaction transaction;
-       boolean isMaster , isDetail =false;
+       boolean isMaster ,isRun ,isDetail =false;
        int Position ;
        long VideoPosition=0;
     @Override
@@ -73,6 +73,7 @@ public class DetailActivity extends AppCompatActivity implements DetailActivityV
         bundle.putSerializable("DataDetail",model);
         bundle.putInt("Position",Position);
         bundle.putLong("VideoPosition",VideoPosition);
+        bundle.putBoolean("isRun",isRun);
         detail.setArguments(bundle);
         if(Detail ==null) {
             getSupportFragmentManager().beginTransaction().
@@ -85,8 +86,9 @@ public class DetailActivity extends AppCompatActivity implements DetailActivityV
         }
     }
     @Override
-    public void SetPositionofVideo(long Position) {
+    public void SetPositionofVideo(long Position , boolean r) {
         this.VideoPosition=Position;
+        isRun=r;
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -96,6 +98,7 @@ public class DetailActivity extends AppCompatActivity implements DetailActivityV
     outState.putBoolean("isDetail",isDetail);
     outState.putInt("Position",Position);
     outState.putLong("VideoPosition",VideoPosition);
+    outState.putBoolean("isRun",isRun);
         Log.i("Morse", "onSaveInstanceState: Detail Activity");
     }
     @Override
@@ -106,6 +109,7 @@ public class DetailActivity extends AppCompatActivity implements DetailActivityV
         isDetail=savedInstanceState.getBoolean("isDetail");
         Position=savedInstanceState.getInt("Position");
         VideoPosition=savedInstanceState.getLong("VideoPosition");
+        isRun=savedInstanceState.getBoolean("isRun");
         Log.i("Morse", "onRestoreInstanceState: Detail Activity");
     }
 }

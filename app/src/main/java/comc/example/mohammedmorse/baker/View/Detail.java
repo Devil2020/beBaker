@@ -12,16 +12,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ScrollView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
-import comc.example.mohammedmorse.baker.Adapters.IngrediantsAdapter;
-import comc.example.mohammedmorse.baker.Adapters.StepsAdapter;
 import comc.example.mohammedmorse.baker.Model.Retrofit.TotalJsonDataModel;
 import comc.example.mohammedmorse.baker.Presenter.DetailFragmentPresenterImplementation;
 import comc.example.mohammedmorse.baker.R;
@@ -30,6 +34,7 @@ public class Detail extends Fragment implements DetailFragmentView{
     SimpleExoPlayer player;
     ImageButton Previous , Next;
     TextView Description ;
+    ImageView thumbnailURL;
     ConstraintLayout scrollView , scrollView2;
     TotalJsonDataModel model;
     DetailActivityView view;
@@ -38,16 +43,15 @@ public class Detail extends Fragment implements DetailFragmentView{
     int RotatePosition;
     long VideoPosition;
     Context context;
-    String Uri=null;
+    String uriVideo , uriImage =null;
+    boolean isRun;
     public Detail() {
         // Required empty public constructor
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,6 +63,7 @@ public class Detail extends Fragment implements DetailFragmentView{
         scrollView2=view.findViewById(R.id.DetailFragmentLayout2);
         Previous=view.findViewById(R.id.Previous);
         Next=view.findViewById(R.id.Next);
+        thumbnailURL=view.findViewById(R.id.ThumblinImage);
         Previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,13 +79,16 @@ public class Detail extends Fragment implements DetailFragmentView{
         model= (TotalJsonDataModel) getArguments().getSerializable("DataDetail");
         StepPosition=getArguments().getInt("Position");
         VideoPosition=getArguments().getLong("VideoPosition");
+        isRun=getArguments().getBoolean("isRun");
         if(StepPosition==0){
             Previous.setVisibility(View.INVISIBLE);
         }
-        Uri=getUri(StepPosition);
+        getUri(StepPosition);
         presenterImplementation=new DetailFragmentPresenterImplementation
                 (context,exoPlayerView,this);
-        presenterImplementation.InitExoplayer(Uri);
+        if(uriVideo.length()>0) {
+            presenterImplementation.InitExoplayer(uriVideo);
+        }
         UI(model , StepPosition);
     return view;
     }
@@ -90,7 +98,6 @@ public class Detail extends Fragment implements DetailFragmentView{
         this.context=context;
         view= (DetailActivityView) context;
     }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -130,7 +137,38 @@ public class Detail extends Fragment implements DetailFragmentView{
           this.player=player;
           exoPlayerView.setPlayer(player);
           player.prepare(mediaSource);
-          player.setPlayWhenReady(true);
+          player.setPlayWhenReady(isRun);
+          player.addListener(new ExoPlayer.EventListener() {
+              @Override
+              public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+              }
+
+              @Override
+              public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+              }
+
+              @Override
+              public void onLoadingChanged(boolean isLoading) {
+
+              }
+
+              @Override
+              public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                        isRun=playWhenReady;
+              }
+
+              @Override
+              public void onPlayerError(ExoPlaybackException error) {
+
+              }
+
+              @Override
+              public void onPositionDiscontinuity() {
+
+              }
+          });
           if(StepPosition==RotatePosition) {
               player.seekTo(VideoPosition);
           }
@@ -143,42 +181,46 @@ public class Detail extends Fragment implements DetailFragmentView{
         if(StepPosition==1){
             Previous.setVisibility(View.INVISIBLE);
         }
-        Uri=getUri(--StepPosition);
-        presenterImplementation.InitExoplayer(Uri);
+        getUri(--StepPosition);
+        presenterImplementation.InitExoplayer(uriVideo);
     }
-
     @Override
     public void NextButtonAction() {
         if (Previous.getVisibility() == View.INVISIBLE) {
             Previous.setVisibility(View.VISIBLE);
         }
-
-            Uri = getUri(++StepPosition);
-            presenterImplementation.InitExoplayer(Uri);
+             getUri(++StepPosition);
+            presenterImplementation.InitExoplayer(uriVideo);
 
     }
-    public String getUri(int Position){
-        if(!model.getStepsList().get(Position).getVideoUrl().equals(null)){
-            Uri= model.getStepsList().get(Position).getVideoUrl();
+    public void getUri(int Position){
+        String uriV = model.getStepsList().get(Position).getVideoUrl();
+        String uriI=model.getStepsList().get(Position).getThumbnailUrl();
+        if(uriV.length()>0){
+            uriVideo=uriV;
+            thumbnailURL.setVisibility(View.INVISIBLE);
         }
-        else if(model.getStepsList().get(Position).getVideoUrl().equals(null)&&
-                !model.getStepsList().get(Position).getThumbnailUrl().equals(null)){
-            Uri=model.getStepsList().get(Position).getThumbnailUrl();
+        else if(uriI.length()>0&&uriV.length()==0){
+            char [] d =uriI.toCharArray();
+                     if(d[d.length-4]=='.'&&d[d.length-3]=='m'&&d[d.length-2]=='p'&&d[d.length-1]=='4')
+                     {
+                         //Show my Image
+                         thumbnailURL.setVisibility(View.VISIBLE);
+                     }
+                     else{
+                         uriImage=uriI;
+                         Glide.with(context).load(Uri.parse(uriImage)).into(thumbnailURL);
+                     }
+                     uriVideo=uriV;
         }
-        else{
-            Toast.makeText(context, "There is`t a Uri to attach to Exoplayerviewer", Toast.LENGTH_SHORT).show();
-        }
-        return Uri;
     }
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        view.SetPositionofVideo(player.getCurrentPosition());
+        view.SetPositionofVideo(player.getCurrentPosition(),isRun);
         outState.putInt("RotatePosition",StepPosition);
         Log.i("Morse", "onSaveInstanceState: Fragment");
     }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

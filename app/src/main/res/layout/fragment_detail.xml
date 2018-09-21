@@ -15,12 +15,21 @@
         android:orientation="vertical"
         android:id="@+id/StepsLayout"
         tools:context="comc.example.mohammedmorse.baking.StepFragment">
-
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
         <!-- TODO: Update blank fragment layout -->
         <com.google.android.exoplayer2.ui.SimpleExoPlayerView
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:id="@+id/SimpleExoPlayerView"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/ThumblinImage"
+                android:src="@drawable/abc"
+                />
+        </FrameLayout>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

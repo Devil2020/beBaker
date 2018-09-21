@@ -1,5 +1,7 @@
 package comc.example.mohammedmorse.baker.View;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
@@ -23,6 +25,8 @@ import comc.example.mohammedmorse.baker.Model.DataBase.DatabaseContrct;
 import comc.example.mohammedmorse.baker.Model.Retrofit.TotalJsonDataModel;
 import comc.example.mohammedmorse.baker.Presenter.MasterFragmentPresenterImplemetation;
 import comc.example.mohammedmorse.baker.R;
+import comc.example.mohammedmorse.baker.Widget.ListWidget;
+import comc.example.mohammedmorse.baker.Widget.WidgetService;
 
 public class Master extends Fragment implements MasterFragmentView ,View.OnClickListener{
     Context context;
@@ -36,6 +40,8 @@ public class Master extends Fragment implements MasterFragmentView ,View.OnClick
     RecyclerView.LayoutManager IngrediantLayoutManager , StepsLayoutManager;
     DetailActivityView detailActivity;
     MasterFragmentPresenterImplemetation masterFragmentPresenterImplemetation;
+    AppWidgetManager appWidgetManager ;
+
     public Master() {
 
     }
@@ -134,6 +140,9 @@ public class Master extends Fragment implements MasterFragmentView ,View.OnClick
     @Override
     public void onClick(View view) {
         imageButton= (ImageButton) view;
+        appWidgetManager = AppWidgetManager.getInstance(context);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
+                new ComponentName(context, ListWidget.class));
         if(view.getTag()=="Success"){
             //Insert
             ContentValues[] values=getContentValues();
@@ -141,12 +150,15 @@ public class Master extends Fragment implements MasterFragmentView ,View.OnClick
             masterFragmentPresenterImplemetation.InsertContentValues(values);
             imageButton.setImageResource(R.drawable.error);
             imageButton.setTag("Error");
+
         }else{
             //Delet
             masterFragmentPresenterImplemetation.Delet();
             imageButton.setImageResource(R.drawable.success);
             imageButton.setTag("Success");
         }
+
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.ListView);
     }
     public ContentValues[] getContentValues(){
         ContentValues[] values=new ContentValues[model.getIngrediantList().size()];

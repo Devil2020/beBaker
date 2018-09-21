@@ -5,8 +5,13 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
+import comc.example.mohammedmorse.baker.Model.DataBase.ContentProviderContract;
+import comc.example.mohammedmorse.baker.Model.DataBase.DatabaseContrct;
 import comc.example.mohammedmorse.baker.R;
 import comc.example.mohammedmorse.baker.View.DetailActivity;
 
@@ -20,6 +25,8 @@ public class ListWidget extends AppWidgetProvider {
 
         CharSequence widgetText = context.getString(R.string.appwidget_text);
         // Construct the RemoteViews object
+        String [] strings=new String[1];
+        strings[0]= DatabaseContrct.ColumeName;
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.list_widget);
         Intent intent=new Intent(context,WidgetService.class);
         views.setRemoteAdapter(R.id.ListView,intent);
@@ -27,6 +34,7 @@ public class ListWidget extends AppWidgetProvider {
         PendingIntent pendingIntent=PendingIntent.getActivity(context,1,DetailAct,PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.ListView,pendingIntent);
         // Instruct the widget manager to update the widget
+        Log.i("Morse", "updateAppWidget: Hey here what you want");
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
@@ -47,5 +55,6 @@ public class ListWidget extends AppWidgetProvider {
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
     }
+
 }
 

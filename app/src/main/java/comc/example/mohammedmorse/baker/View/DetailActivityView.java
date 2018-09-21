@@ -9,5 +9,5 @@ import comc.example.mohammedmorse.baker.Model.Retrofit.TotalJsonDataModel;
 public interface DetailActivityView {
     public void StartMasterFragment(TotalJsonDataModel model);
     public void StartDetailFragment(TotalJsonDataModel model , int Position);
-    public void SetPositionofVideo(long Position);
+    public void SetPositionofVideo(long Position , boolean isRun);
 }
